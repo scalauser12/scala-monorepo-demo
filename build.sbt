@@ -24,6 +24,7 @@ lazy val root = (project in file("."))
     publish / skip := true,
     releaseIOMonorepoDetectChanges := true,
     releaseIOIgnoreUntrackedFiles := true,
+    releaseIOMonorepoIncludeDownstream := true,
     // Remove push and publish for local demo
     releaseIOMonorepoProcess := releaseIOMonorepoProcess.value.filterNot { step =>
       step.name == "push-changes" || step.name == "publish-artifacts"
