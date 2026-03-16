@@ -1,5 +1,5 @@
 ThisBuild / organization := "com.example"
-ThisBuild / scalaVersion := "3.3.4"
+ThisBuild / scalaVersion := "3.8.1"
 
 lazy val common = (project in file("common"))
   .settings(name := "demo-common")
