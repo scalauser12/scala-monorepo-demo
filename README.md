@@ -1,6 +1,6 @@
 # scala-monorepo-demo
 
-A demo project showcasing the [sbt-release-io-monorepo](https://github.com/scalauser12/sbt-release-io) plugin for independent versioning and releasing of subprojects in an sbt monorepo.
+A demo project showcasing the [sbt-release-io-monorepo](https://github.com/scalauser12/sbt-release-io/blob/main/modules/monorepo/README.md) plugin for independent versioning and releasing of subprojects in an sbt monorepo.
 
 ## Prerequisites
 

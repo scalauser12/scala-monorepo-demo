@@ -1,5 +1,6 @@
 ThisBuild / organization := "com.example"
 ThisBuild / scalaVersion := "3.8.1"
+ThisBuild / libraryDependencies += "org.scalameta" %% "munit" % "1.1.1" % Test
 
 lazy val common = (project in file("common"))
   .settings(name := "demo-common")
