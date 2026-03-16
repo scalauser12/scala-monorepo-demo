@@ -3,16 +3,22 @@ target/
 project/target/
 project/project/
 
-# IDE
-.idea/
-.vscode/
-*.iml
+# Build Server Protocol
 .bsp/
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iml
+
+# IDE - VSCode
+.vscode/
+
+# Scala tooling - Metals & Bloop
+.metals/
 metals.*
-*.semanticdb
 project/metals.sbt
 project/project/metals.sbt
-.metals/
+*.semanticdb
 .bloop/
 
 # OS
