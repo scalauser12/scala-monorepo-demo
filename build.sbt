@@ -28,6 +28,10 @@ lazy val root = (project in file("."))
     releaseIOMonorepoIncludeDownstream := true,
     releaseIOMonorepoDetectChangesExcludes :=
       Seq("common", "core", "api", "cli").map(baseDirectory.value / _ / "CHANGELOG.md"),
+    releaseIOMonorepoCommitMessage := (summary => s"release: $summary"),
+    releaseIOMonorepoNextCommitMessage := (summary => s"chore: bump to next snapshot ($summary)"),
+    releaseIOMonorepoTagName := ((name, ver) => s"$name-v$ver"),
+    releaseIOMonorepoTagComment := ((name, ver) => s"Release $name version $ver"),
     // Remove push and publish for local demo
     releaseIOMonorepoProcess := releaseIOMonorepoProcess.value.filterNot(step =>
       step.name == "push-changes" || step.name == "publish-artifacts"

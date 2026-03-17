@@ -63,6 +63,10 @@ lazy val root = (project in file("."))
     releaseIOMonorepoIncludeDownstream := true,
     releaseIOMonorepoDetectChangesExcludes :=
       Seq("common", "core", "api", "cli").map(baseDirectory.value / _ / "CHANGELOG.md"),
+    releaseIOMonorepoCommitMessage := (summary => s"release: $summary"),
+    releaseIOMonorepoNextCommitMessage := (summary => s"chore: bump to next snapshot ($summary)"),
+    releaseIOMonorepoTagName := ((name, ver) => s"$name-v$ver"),
+    releaseIOMonorepoTagComment := ((name, ver) => s"Release $name version $ver"),
     releaseIOMonorepoProcess := releaseIOMonorepoProcess.value.filterNot(step =>
       step.name == "push-changes" || step.name == "publish-artifacts"
     )
@@ -77,6 +81,10 @@ Key settings:
 | `releaseIOIgnoreUntrackedFiles` | `true` | Allows releasing with untracked files in the working directory |
 | `releaseIOMonorepoIncludeDownstream` | `true` | Automatically includes transitive dependents of changed projects in the release |
 | `releaseIOMonorepoDetectChangesExcludes` | CHANGELOG.md per subproject | Files excluded from git-based change detection |
+| `releaseIOMonorepoCommitMessage` | `summary => s"release: $summary"` | Custom format for release version commit messages |
+| `releaseIOMonorepoNextCommitMessage` | `summary => s"chore: bump to next snapshot ($summary)"` | Custom format for next snapshot version commit messages |
+| `releaseIOMonorepoTagName` | `(name, ver) => s"$name-v$ver"` | Custom tag name format (default: `<project>/v<version>`) |
+| `releaseIOMonorepoTagComment` | `(name, ver) => s"Release $name version $ver"` | Custom annotated tag message |
 
 The `push-changes` and `publish-artifacts` steps are filtered out so the demo runs entirely locally.
 
@@ -90,12 +98,12 @@ The plugin will:
 
 1. Check for a clean working directory
 2. Resolve the release order based on the dependency graph (`common -> core -> cli -> api`)
-3. Detect which projects have changed since their last release tag (e.g. `common/v0.1.0`)
+3. Detect which projects have changed since their last release tag (e.g. `common-v0.1.0`)
 4. If `releaseIOMonorepoIncludeDownstream` is enabled, include all downstream dependents of changed projects
 5. For each selected project: check for snapshot dependencies, compute release and next versions
 6. Run `clean` and `test` for each selected project
 7. Write release versions to each project's `version.sbt`, commit
-8. Create per-project tags (e.g. `common/v0.1.0`, `core/v0.1.0`)
+8. Create per-project tags (e.g. `common-v0.1.0`, `core-v0.1.0`)
 9. Write next snapshot versions, commit
 
 ### Releasing Specific Projects
@@ -128,9 +136,13 @@ With `releaseIOMonorepoIncludeDownstream := true`, changing only `common` will a
 
 CHANGELOG.md files are excluded from change detection via `releaseIOMonorepoDetectChangesExcludes`. Editing a subproject's CHANGELOG won't trigger a release for that project. This is useful for files that change alongside releases but shouldn't cause re-releases of downstream dependents.
 
+### Custom Commit Messages and Tags
+
+Commit messages and tag formats are customizable via settings. This demo uses conventional commit prefixes (`release:`, `chore:`) and a hyphenated tag format (`core-v0.1.0` instead of the default `core/v0.1.0`).
+
 ### Per-Project Tagging
 
-Each project gets its own tag in the format `<project>/v<version>` (e.g. `core/v0.1.0`). This enables independent version tracking and change detection per subproject.
+Each project gets its own tag in the format `<project>-v<version>` (e.g. `core-v0.1.0`). This enables independent version tracking and change detection per subproject.
 
 ## Additional Configuration
 
