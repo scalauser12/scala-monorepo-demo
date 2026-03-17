@@ -44,7 +44,7 @@ Each subproject maintains its own `version.sbt` file, allowing independent versi
 ### plugins.sbt
 
 ```scala
-addSbtPlugin("io.github.scalauser12" % "sbt-release-io-monorepo" % "0.5.0")
+addSbtPlugin("io.github.scalauser12" % "sbt-release-io-monorepo" % "0.5.1")
 ```
 
 ### build.sbt
