@@ -1,6 +1,6 @@
 ThisBuild / organization := "com.example"
 ThisBuild / scalaVersion := "3.8.1"
-ThisBuild / libraryDependencies += "org.scalameta" %% "munit" % "1.1.1" % Test
+ThisBuild / libraryDependencies += "org.scalameta" %% "munit" % "1.2.4" % Test
 
 lazy val common = (project in file("common"))
   .settings(name := "demo-common")
@@ -26,8 +26,10 @@ lazy val root = (project in file("."))
     releaseIOMonorepoDetectChanges := true,
     releaseIOIgnoreUntrackedFiles := true,
     releaseIOMonorepoIncludeDownstream := true,
+    releaseIOMonorepoDetectChangesExcludes :=
+      Seq("common", "core", "api", "cli").map(baseDirectory.value / _ / "CHANGELOG.md"),
     // Remove push and publish for local demo
-    releaseIOMonorepoProcess := releaseIOMonorepoProcess.value.filterNot { step =>
+    releaseIOMonorepoProcess := releaseIOMonorepoProcess.value.filterNot(step =>
       step.name == "push-changes" || step.name == "publish-artifacts"
-    }
+    )
   )

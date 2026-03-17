@@ -13,15 +13,20 @@ A demo project showcasing the [sbt-release-io-monorepo](https://github.com/scala
 ```
 scala-monorepo-demo/
 ├── common/          # Shared utilities (no dependencies)
-│   └── version.sbt
+│   ├── version.sbt
+│   └── CHANGELOG.md
 ├── core/            # Core logic (depends on common)
-│   └── version.sbt
+│   ├── version.sbt
+│   └── CHANGELOG.md
 ├── api/             # HTTP API (depends on core)
-│   └── version.sbt
+│   ├── version.sbt
+│   └── CHANGELOG.md
 ├── cli/             # CLI tool (depends on core)
-│   └── version.sbt
+│   ├── version.sbt
+│   └── CHANGELOG.md
 ├── build.sbt
 └── project/
+    ├── build.properties
     └── plugins.sbt
 ```
 
@@ -51,13 +56,16 @@ lazy val root = (project in file("."))
   .aggregate(common, core, api, cli)
   .enablePlugins(MonorepoReleasePlugin)
   .settings(
+    name := "scala-monorepo-demo",
     publish / skip := true,
     releaseIOMonorepoDetectChanges := true,
     releaseIOIgnoreUntrackedFiles := true,
     releaseIOMonorepoIncludeDownstream := true,
-    releaseIOMonorepoProcess := releaseIOMonorepoProcess.value.filterNot { step =>
+    releaseIOMonorepoDetectChangesExcludes :=
+      Seq("common", "core", "api", "cli").map(baseDirectory.value / _ / "CHANGELOG.md"),
+    releaseIOMonorepoProcess := releaseIOMonorepoProcess.value.filterNot(step =>
       step.name == "push-changes" || step.name == "publish-artifacts"
-    }
+    )
   )
 ```
 
@@ -68,6 +76,7 @@ Key settings:
 | `releaseIOMonorepoDetectChanges` | `true` | Uses git to detect which subprojects have changed since their last release tag |
 | `releaseIOIgnoreUntrackedFiles` | `true` | Allows releasing with untracked files in the working directory |
 | `releaseIOMonorepoIncludeDownstream` | `true` | Automatically includes transitive dependents of changed projects in the release |
+| `releaseIOMonorepoDetectChangesExcludes` | CHANGELOG.md per subproject | Files excluded from git-based change detection |
 
 The `push-changes` and `publish-artifacts` steps are filtered out so the demo runs entirely locally.
 
@@ -115,6 +124,10 @@ Projects are topologically sorted so dependencies are always released before dep
 
 With `releaseIOMonorepoIncludeDownstream := true`, changing only `common` will automatically include `core`, `api`, and `cli` in the release, since they transitively depend on it.
 
+### Change Detection Excludes
+
+CHANGELOG.md files are excluded from change detection via `releaseIOMonorepoDetectChangesExcludes`. Editing a subproject's CHANGELOG won't trigger a release for that project. This is useful for files that change alongside releases but shouldn't cause re-releases of downstream dependents.
+
 ### Per-Project Tagging
 
 Each project gets its own tag in the format `<project>/v<version>` (e.g. `core/v0.1.0`). This enables independent version tracking and change detection per subproject.
@@ -130,6 +143,5 @@ The plugin supports many more settings not used in this demo:
 | `releaseIOMonorepoCrossBuild` | `false` | Enable cross-building |
 | `releaseIOMonorepoSkipTests` | `false` | Skip the test step |
 | `releaseIOMonorepoSharedPaths` | `Seq("build.sbt", "project/")` | Root paths that trigger all projects when changed |
-| `releaseIOMonorepoDetectChangesExcludes` | `Seq.empty` | Files to exclude from change detection |
 
 See the [plugin documentation](https://github.com/scalauser12/sbt-release-io/blob/main/modules/monorepo/README.md) for the full configuration reference.
