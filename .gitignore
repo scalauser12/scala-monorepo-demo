@@ -13,6 +13,9 @@ project/project/
 # IDE - VSCode
 .vscode/
 
+# IDE - Cursor
+.cursor/
+
 # Scala tooling - Metals & Bloop
 .metals/
 metals.*

@@ -1,5 +1,5 @@
 ThisBuild / organization := "com.example"
-ThisBuild / scalaVersion := "3.8.1"
+ThisBuild / scalaVersion := "3.8.2"
 ThisBuild / libraryDependencies += "org.scalameta" %% "munit" % "1.2.4" % Test
 
 lazy val common = (project in file("common"))
@@ -32,8 +32,7 @@ lazy val root = (project in file("."))
     releaseIOMonorepoNextCommitMessage := (summary => s"chore: bump to next snapshot ($summary)"),
     releaseIOMonorepoTagName := ((name, ver) => s"$name-v$ver"),
     releaseIOMonorepoTagComment := ((name, ver) => s"Release $name version $ver"),
-    // Remove push and publish for local demo
-    releaseIOMonorepoProcess := releaseIOMonorepoProcess.value.filterNot(step =>
-      step.name == "push-changes" || step.name == "publish-artifacts"
-    )
+    // Disable remote side effects for the local demo.
+    releaseIOMonorepoEnablePush := false,
+    releaseIOMonorepoEnablePublish := false
   )

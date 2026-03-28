@@ -44,7 +44,7 @@ Each subproject maintains its own `version.sbt` file, allowing independent versi
 ### plugins.sbt
 
 ```scala
-addSbtPlugin("io.github.scalauser12" % "sbt-release-io-monorepo" % "0.5.1")
+addSbtPlugin("io.github.scalauser12" % "sbt-release-io-monorepo" % "0.7.0")
 ```
 
 ### build.sbt
@@ -67,9 +67,8 @@ lazy val root = (project in file("."))
     releaseIOMonorepoNextCommitMessage := (summary => s"chore: bump to next snapshot ($summary)"),
     releaseIOMonorepoTagName := ((name, ver) => s"$name-v$ver"),
     releaseIOMonorepoTagComment := ((name, ver) => s"Release $name version $ver"),
-    releaseIOMonorepoProcess := releaseIOMonorepoProcess.value.filterNot(step =>
-      step.name == "push-changes" || step.name == "publish-artifacts"
-    )
+    releaseIOMonorepoEnablePush := false,
+    releaseIOMonorepoEnablePublish := false
   )
 ```
 
@@ -85,8 +84,10 @@ Key settings:
 | `releaseIOMonorepoNextCommitMessage` | `summary => s"chore: bump to next snapshot ($summary)"` | Custom format for next snapshot version commit messages |
 | `releaseIOMonorepoTagName` | `(name, ver) => s"$name-v$ver"` | Custom tag name format (default: `<project>/v<version>`) |
 | `releaseIOMonorepoTagComment` | `(name, ver) => s"Release $name version $ver"` | Custom annotated tag message |
+| `releaseIOMonorepoEnablePush` | `false` | Disables the `push-changes` step so the demo stays local |
+| `releaseIOMonorepoEnablePublish` | `false` | Disables the `publish-artifacts` step so the demo stays local |
 
-The `push-changes` and `publish-artifacts` steps are filtered out so the demo runs entirely locally.
+The `push-changes` and `publish-artifacts` steps are disabled so the demo runs entirely locally.
 
 ## Running a Release
 
