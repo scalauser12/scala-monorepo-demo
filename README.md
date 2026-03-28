@@ -151,10 +151,10 @@ The plugin supports many more settings not used in this demo:
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `releaseIOMonorepoTagStrategy` | `PerProject` | `PerProject` or `Unified` tagging |
-| `releaseIOMonorepoUseGlobalVersion` | `false` | Use a single root `version.sbt` for all projects |
-| `releaseIOMonorepoCrossBuild` | `false` | Enable cross-building |
 | `releaseIOMonorepoSkipTests` | `false` | Skip the test step |
+| `releaseIOMonorepoCrossBuild` | `false` | Enable cross-building |
 | `releaseIOMonorepoSharedPaths` | `Seq("build.sbt", "project/")` | Root paths that trigger all projects when changed |
+| `releaseIOMonorepoInteractive` | `false` | Prompt interactively for versions during `inquire-versions` |
+| `releaseIOMonorepoEnableRunClean` | `true` | Include `run-clean` in the compiled process |
 
 See the [plugin documentation](https://github.com/scalauser12/sbt-release-io/blob/main/modules/monorepo/README.md) for the full configuration reference.
