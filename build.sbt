@@ -24,6 +24,7 @@ lazy val root = (project in file("."))
     name := "scala-monorepo-demo",
     publish / skip := true,
     releaseIOMonorepoDetectChanges := true,
+    // Shared core-plugin setting (`releaseIO*`): the monorepo plugin uses it for the clean VCS check.
     releaseIOIgnoreUntrackedFiles := true,
     releaseIOMonorepoIncludeDownstream := true,
     releaseIOMonorepoDetectChangesExcludes :=
