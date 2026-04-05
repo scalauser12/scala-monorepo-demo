@@ -44,7 +44,7 @@ Each subproject maintains its own `version.sbt` file, allowing independent versi
 ### plugins.sbt
 
 ```scala
-addSbtPlugin("io.github.scalauser12" % "sbt-release-io-monorepo" % "0.7.0")
+addSbtPlugin("io.github.scalauser12" % "sbt-release-io-monorepo" % "0.8.1")
 ```
 
 ### build.sbt
@@ -58,17 +58,17 @@ lazy val root = (project in file("."))
   .settings(
     name := "scala-monorepo-demo",
     publish / skip := true,
-    releaseIOMonorepoDetectChanges := true,
-    releaseIOIgnoreUntrackedFiles := true,
-    releaseIOMonorepoIncludeDownstream := true,
-    releaseIOMonorepoDetectChangesExcludes :=
+    releaseIOMonorepoDetectionEnabled := true,
+    releaseIOVcsIgnoreUntrackedFiles := true,
+    releaseIOMonorepoDetectionIncludeDownstream := true,
+    releaseIOMonorepoDetectionExcludes :=
       Seq("common", "core", "api", "cli").map(baseDirectory.value / _ / "CHANGELOG.md"),
-    releaseIOMonorepoCommitMessage := (summary => s"release: $summary"),
-    releaseIOMonorepoNextCommitMessage := (summary => s"chore: bump to next snapshot ($summary)"),
-    releaseIOMonorepoTagName := ((name, ver) => s"$name-v$ver"),
-    releaseIOMonorepoTagComment := ((name, ver) => s"Release $name version $ver"),
-    releaseIOMonorepoEnablePush := false,
-    releaseIOMonorepoEnablePublish := false
+    releaseIOMonorepoVcsReleaseCommitMessage := (summary => s"release: $summary"),
+    releaseIOMonorepoVcsNextCommitMessage := (summary => s"chore: bump to next snapshot ($summary)"),
+    releaseIOMonorepoVcsTagName := ((name, ver) => s"$name-v$ver"),
+    releaseIOMonorepoVcsTagComment := ((name, ver) => s"Release $name version $ver"),
+    releaseIOMonorepoPolicyEnablePush := false,
+    releaseIOMonorepoPolicyEnablePublish := false
   )
 ```
 
@@ -76,20 +76,29 @@ Key settings:
 
 | Setting | Value | Description |
 |---------|-------|-------------|
-| `releaseIOMonorepoDetectChanges` | `true` | Uses git to detect which subprojects have changed since their last release tag |
-| `releaseIOIgnoreUntrackedFiles` | `true` | Allows releasing with untracked files in the working directory |
-| `releaseIOMonorepoIncludeDownstream` | `true` | Automatically includes transitive dependents of changed projects in the release |
-| `releaseIOMonorepoDetectChangesExcludes` | CHANGELOG.md per subproject | Files excluded from git-based change detection |
-| `releaseIOMonorepoCommitMessage` | `summary => s"release: $summary"` | Custom format for release version commit messages |
-| `releaseIOMonorepoNextCommitMessage` | `summary => s"chore: bump to next snapshot ($summary)"` | Custom format for next snapshot version commit messages |
-| `releaseIOMonorepoTagName` | `(name, ver) => s"$name-v$ver"` | Custom tag name format (default: `<project>/v<version>`) |
-| `releaseIOMonorepoTagComment` | `(name, ver) => s"Release $name version $ver"` | Custom annotated tag message |
-| `releaseIOMonorepoEnablePush` | `false` | Disables the `push-changes` step so the demo stays local |
-| `releaseIOMonorepoEnablePublish` | `false` | Disables the `publish-artifacts` step so the demo stays local |
+| `releaseIOMonorepoDetectionEnabled` | `true` | Uses git to detect which subprojects have changed since their last release tag |
+| `releaseIOVcsIgnoreUntrackedFiles` | `true` | Allows releasing with untracked files in the working directory |
+| `releaseIOMonorepoDetectionIncludeDownstream` | `true` | Automatically includes transitive dependents of changed projects in the release |
+| `releaseIOMonorepoDetectionExcludes` | CHANGELOG.md per subproject | Files excluded from git-based change detection |
+| `releaseIOMonorepoVcsReleaseCommitMessage` | `summary => s"release: $summary"` | Custom format for release version commit messages |
+| `releaseIOMonorepoVcsNextCommitMessage` | `summary => s"chore: bump to next snapshot ($summary)"` | Custom format for next snapshot version commit messages |
+| `releaseIOMonorepoVcsTagName` | `(name, ver) => s"$name-v$ver"` | Custom tag name format (default: `<project>/v<version>`) |
+| `releaseIOMonorepoVcsTagComment` | `(name, ver) => s"Release $name version $ver"` | Custom annotated tag message |
+| `releaseIOMonorepoPolicyEnablePush` | `false` | Disables the `push-changes` step so the demo stays local |
+| `releaseIOMonorepoPolicyEnablePublish` | `false` | Disables the `publish-artifacts` step so the demo stays local |
 
 The `push-changes` and `publish-artifacts` steps are disabled so the demo runs entirely locally.
 
+Version `0.8.x` uses grouped monorepo setting names such as `releaseIOMonorepoDetection*`,
+`releaseIOMonorepoVcs*`, and `releaseIOMonorepoPolicy*`.
+
 ## Running a Release
+
+```bash
+sbt "releaseIOMonorepo check with-defaults"
+```
+
+Then run the release locally:
 
 ```bash
 sbt "releaseIOMonorepo with-defaults"
@@ -100,7 +109,7 @@ The plugin will:
 1. Check for a clean working directory
 2. Resolve the release order based on the dependency graph (`common -> core -> cli -> api`)
 3. Detect which projects have changed since their last release tag (e.g. `common-v0.1.0`)
-4. If `releaseIOMonorepoIncludeDownstream` is enabled, include all downstream dependents of changed projects
+4. If `releaseIOMonorepoDetectionIncludeDownstream` is enabled, include all downstream dependents of changed projects
 5. For each selected project: check for snapshot dependencies, compute release and next versions
 6. Run `clean` and `test` for each selected project
 7. Write release versions to each project's `version.sbt`, commit
@@ -131,11 +140,11 @@ Projects are topologically sorted so dependencies are always released before dep
 
 ### Downstream Inclusion
 
-With `releaseIOMonorepoIncludeDownstream := true`, changing only `common` will automatically include `core`, `api`, and `cli` in the release, since they transitively depend on it.
+With `releaseIOMonorepoDetectionIncludeDownstream := true`, changing only `common` will automatically include `core`, `api`, and `cli` in the release, since they transitively depend on it.
 
 ### Change Detection Excludes
 
-CHANGELOG.md files are excluded from change detection via `releaseIOMonorepoDetectChangesExcludes`. Editing a subproject's CHANGELOG won't trigger a release for that project. This is useful for files that change alongside releases but shouldn't cause re-releases of downstream dependents.
+CHANGELOG.md files are excluded from change detection via `releaseIOMonorepoDetectionExcludes`. Editing a subproject's CHANGELOG won't trigger a release for that project. This is useful for files that change alongside releases but shouldn't cause re-releases of downstream dependents.
 
 ### Custom Commit Messages and Tags
 
@@ -151,10 +160,10 @@ The plugin supports many more settings not used in this demo:
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `releaseIOMonorepoSkipTests` | `false` | Skip the test step |
-| `releaseIOMonorepoCrossBuild` | `false` | Enable cross-building |
-| `releaseIOMonorepoSharedPaths` | `Seq("build.sbt", "project/")` | Root paths that trigger all projects when changed |
-| `releaseIOMonorepoInteractive` | `false` | Prompt interactively for versions during `inquire-versions` |
-| `releaseIOMonorepoEnableRunClean` | `true` | Include `run-clean` in the compiled process |
+| `releaseIOMonorepoBehaviorSkipTests` | `false` | Skip the test step |
+| `releaseIOMonorepoBehaviorCrossBuild` | `false` | Enable cross-building |
+| `releaseIOMonorepoDetectionSharedPaths` | `Seq("build.sbt", "project/")` | Root paths that trigger all projects when changed |
+| `releaseIOMonorepoBehaviorInteractive` | `false` | Prompt interactively for versions during `inquire-versions` |
+| `releaseIOMonorepoPolicyEnableRunClean` | `true` | Include `run-clean` in the compiled process |
 
 See the [plugin documentation](https://github.com/scalauser12/sbt-release-io/blob/main/modules/monorepo/README.md) for the full configuration reference.

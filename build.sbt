@@ -23,17 +23,17 @@ lazy val root = (project in file("."))
   .settings(
     name := "scala-monorepo-demo",
     publish / skip := true,
-    releaseIOMonorepoDetectChanges := true,
-    // Shared core-plugin setting (`releaseIO*`): the monorepo plugin uses it for the clean VCS check.
-    releaseIOIgnoreUntrackedFiles := true,
-    releaseIOMonorepoIncludeDownstream := true,
-    releaseIOMonorepoDetectChangesExcludes :=
+    releaseIOMonorepoDetectionEnabled := true,
+    // Shared core-plugin VCS setting: the monorepo plugin uses it for the clean working-tree check.
+    releaseIOVcsIgnoreUntrackedFiles := true,
+    releaseIOMonorepoDetectionIncludeDownstream := true,
+    releaseIOMonorepoDetectionExcludes :=
       Seq("common", "core", "api", "cli").map(baseDirectory.value / _ / "CHANGELOG.md"),
-    releaseIOMonorepoCommitMessage := (summary => s"release: $summary"),
-    releaseIOMonorepoNextCommitMessage := (summary => s"chore: bump to next snapshot ($summary)"),
-    releaseIOMonorepoTagName := ((name, ver) => s"$name-v$ver"),
-    releaseIOMonorepoTagComment := ((name, ver) => s"Release $name version $ver"),
+    releaseIOMonorepoVcsReleaseCommitMessage := (summary => s"release: $summary"),
+    releaseIOMonorepoVcsNextCommitMessage := (summary => s"chore: bump to next snapshot ($summary)"),
+    releaseIOMonorepoVcsTagName := ((name, ver) => s"$name-v$ver"),
+    releaseIOMonorepoVcsTagComment := ((name, ver) => s"Release $name version $ver"),
     // Disable remote side effects for the local demo.
-    releaseIOMonorepoEnablePush := false,
-    releaseIOMonorepoEnablePublish := false
+    releaseIOMonorepoPolicyEnablePush := false,
+    releaseIOMonorepoPolicyEnablePublish := false
   )
