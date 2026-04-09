@@ -44,7 +44,7 @@ Each subproject maintains its own `version.sbt` file, allowing independent versi
 ### plugins.sbt
 
 ```scala
-addSbtPlugin("io.github.scalauser12" % "sbt-release-io-monorepo" % "0.8.1")
+addSbtPlugin("io.github.scalauser12" % "sbt-release-io-monorepo" % "0.9.2")
 ```
 
 ### build.sbt
@@ -89,7 +89,7 @@ Key settings:
 
 The `push-changes` and `publish-artifacts` steps are disabled so the demo runs entirely locally.
 
-Version `0.8.x` uses grouped monorepo setting names such as `releaseIOMonorepoDetection*`,
+Current releases use grouped monorepo setting names such as `releaseIOMonorepoDetection*`,
 `releaseIOMonorepoVcs*`, and `releaseIOMonorepoPolicy*`.
 
 ## Running a Release
