@@ -1,1 +1,1 @@
-addSbtPlugin("io.github.scalauser12" % "sbt-release-io-monorepo" % "0.10.0")
+addSbtPlugin("io.github.scalauser12" % "sbt-release-io-monorepo" % "0.11.0")
