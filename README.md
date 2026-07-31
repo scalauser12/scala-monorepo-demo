@@ -4,7 +4,7 @@ A demo project showcasing the [sbt-release-io-monorepo](https://github.com/scala
 
 ## Prerequisites
 
-- JDK 11+
+- JDK 17+
 - sbt
 - git
 
@@ -44,7 +44,7 @@ Each subproject maintains its own `version.sbt` file, allowing independent versi
 ### plugins.sbt
 
 ```scala
-addSbtPlugin("io.github.scalauser12" % "sbt-release-io-monorepo" % "0.13.0")
+addSbtPlugin("io.github.scalauser12" % "sbt-release-io-monorepo" % "0.13.7")
 ```
 
 ### build.sbt
