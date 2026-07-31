@@ -5,7 +5,7 @@ A demo project showcasing the [sbt-release-io-monorepo](https://github.com/scala
 ## Prerequisites
 
 - JDK 17+
-- sbt
+- sbt 2.0.4
 - git
 
 ## Project Structure
